@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DATA PASIEN - YAYASAN KETENANGAN JIWA DAN HATI</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #b7e4c7 0%, #90e0ef 100%);
+    color: #2f2f2f;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background-color: #2d6a4f;
+    color: rgb(255, 255, 255);
+    font-weight: 700;
+    font-size: 1.7rem;
+    text-align: center;
+    padding: 1.25rem;
+    letter-spacing: 0.05em;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 2rem auto 3rem;
+    background-color: white;
+    border-radius: 15px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 12px 24px rgba(34,50,84,0.1);
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1.25rem;
+    color: #174c37;
+  }
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  label {
+    font-weight: 600;
+    color: #205943;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border: 2px solid #6abf69;
+    border-radius: 10px;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #2d6a4f;
+    box-shadow: 0 0 8px #2d6a4faa;
+  }
+  textarea {
+    min-height: 70px;
+  }
+  button {
+    grid-column: 1 / -1;
+    padding: 0.9rem;
+    background-color: #2d6a4f;
+    color: white;
+    border: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 3px 8px #23623faa;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #1b4127;
+  }
+  #search-container {
+    margin-bottom: 1rem;
+    text-align: right;
+  }
+  #search-input {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #6abf69;
+    border-radius: 12px;
+    font-size: 1rem;
+    width: 250px;
+    transition: border-color 0.3s ease;
+  }
+  #search-input:focus {
+    outline: none;
+    border-color: #2d6a4f;
+    box-shadow: 0 0 8px #2d6a4faa;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+    font-size: 0.95rem;
+  }
+  th, td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #8dc498;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background-color: #2d6a4f;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #def1dd;
+  }
+  tr:hover {
+    background-color: #c7d3c3;
+  }
+  .btn-edit,
+  .btn-delete {
+    cursor: pointer;
+    border: none;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    font-weight: 700;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+  }
+  .btn-edit {
+    background-color: #6aa84f;
+  }
+  .btn-edit:hover {
+    background-color: #4a7531;
+  }
+  .btn-delete {
+    background-color: #cc0000;
+  }
+  .btn-delete:hover {
+    background-color: #7b0000;
+  }
+  .message {
+    margin-top: 1rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    display: none;
+  }
+  .message.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  @media (max-width: 760px) {
+    form {
+      grid-template-columns: 1fr;
+    }
+    button {
+      grid-column: span 1;
+    }
+    #search-input {
+      width: 100%;
+      max-width: none;
+    }
+    #search-container {
+      text-align: left;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    YAYASAN KETENANGAN JIWA DAN HATI - DATA PASIEN
+  </header>
+  <main>
+    <h1>Data Pasien</h1>
+    <form id="patient-form" novalidate>
+      <input type="hidden" id="patient-id" />
+      <div>
+        <label for="name">Nama Lengkap<span aria-hidden="true" style="color:#cc0000;"> *</span></label>
+        <input type="text" id="name" required minlength="3" placeholder="Masukkan nama lengkap" />
+      </div>
+      <div>
+        <label for="rm-number">Nomor RM<span aria-hidden="true" style="color:#cc0000;"> *</span></label>
+        <input type="text" id="rm-number" required minlength="3" placeholder="Nomor Rekam Medis" />
+      </div>
+      <div>
+        <label for="birthplace">Tempat Lahir<span aria-hidden="true" style="color:#cc0000;"> *</span></label>
+        <input type="text" id="birthplace" required minlength="2" placeholder="Tempat lahir" />
+      </div>
+      <div>
+        <label for="birthdate">Tanggal Lahir<span aria-hidden="true" style="color:#cc0000;"> *</span></label>
+        <input type="date" id="birthdate" required />
+      </div>
+      <div>
+        <label for="gender">Jenis Kelamin<span aria-hidden="true" style="color:#cc0000;"> *</span></label>
+        <select id="gender" required>
+          <option value="">-- Pilih Jenis Kelamin --</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+      </div>
+      <div>
+        <label for="age">Umur<span aria-hidden="true" style="color:#cc0000;"> *</span></label>
+        <input type="number" id="age" required min="0" max="120" placeholder="Umur (tahun)" />
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <label for="medications">Obat yang Dikonsumsi</label>
+        <textarea id="medications" rows="3" placeholder="Tuliskan obat yang sedang dikonsumsi"></textarea>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <button type="submit">Simpan Data</button>
+      </div>
+    </form>
+
+    <div id="message" role="alert" aria-live="polite" class="message"></div>
+
+    <div id="search-container">
+      <input type="text" id="search-input" placeholder="Cari pasien..." aria-label="Cari pasien" />
+    </div>
+
+    <table aria-label="Tabel data pasien">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Nomor RM</th>
+          <th>Tempat, Tanggal Lahir</th>
+          <th>Jenis Kelamin</th>
+          <th>Umur</th>
+          <th>Obat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="patient-list"></tbody>
+    </table>
+  </main>
+  <script>
+    (() => {
+      const STORAGE_KEY = 'yayasan_patient_data';
+
+      const form = document.getElementById('patient-form');
+      const inputId = document.getElementById('patient-id');
+      const inputName = document.getElementById('name');
+      const inputRM = document.getElementById('rm-number');
+      const inputBirthplace = document.getElementById('birthplace');
+      const inputBirthdate = document.getElementById('birthdate');
+      const inputGender = document.getElementById('gender');
+      const inputAge = document.getElementById('age');
+      const inputMedications = document.getElementById('medications');
+      const messageEl = document.getElementById('message');
+      const patientListEl = document.getElementById('patient-list');
+      const searchInput = document.getElementById('search-input');
+
+      let patients = [];
+
+      function loadPatients() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        patients = data ? JSON.parse(data) : [];
+      }
+
+      function savePatients() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+      }
+
+      function clearForm() {
+        inputId.value = '';
+        inputName.value = '';
+        inputRM.value = '';
+        inputBirthplace.value = '';
+        inputBirthdate.value = '';
+        inputGender.value = '';
+        inputAge.value = '';
+        inputMedications.value = '';
+      }
+
+      function showMessage(text, type='success') {
+        messageEl.textContent = text;
+        messageEl.className = 'message ' + (type === 'success' ? 'success' : 'error');
+        messageEl.style.display = 'block';
+        clearTimeout(showMessage._timeout);
+        showMessage._timeout = setTimeout(() => {
+          messageEl.style.display = 'none';
+        }, 3500);
+      }
+
+      function generateId() {
+        return '_' + Math.random().toString(36).substr(2, 9);
+      }
+
+      function validateForm() {
+        if(inputName.value.trim().length < 3) {
+          showMessage('Nama lengkap minimal 3 karakter.', 'error');
+          return false;
+        }
+        if(inputRM.value.trim().length < 3) {
+          showMessage('Nomor RM minimal 3 karakter.', 'error');
+          return false;
+        }
+        if(inputBirthplace.value.trim().length < 2) {
+          showMessage('Tempat lahir minimal 2 karakter.', 'error');
+          return false;
+        }
+        if(!inputBirthdate.value) {
+          showMessage('Tanggal lahir harus diisi.', 'error');
+          return false;
+        }
+        if(!inputGender.value) {
+          showMessage('Jenis kelamin harus dipilih.', 'error');
+          return false;
+        }
+        const age = Number(inputAge.value);
+        if(!age || age < 0 || age > 120) {
+          showMessage('Umur harus berupa angka antara 0 dan 120.', 'error');
+          return false;
+        }
+        return true;
+      }
+
+      function renderPatients(filter = '') {
+        let displayPatients = patients;
+        if(filter.trim().length > 0) {
+          const q = filter.toLowerCase();
+          displayPatients = patients.filter(p => {
+            return (p.name && p.name.toLowerCase().includes(q)) ||
+                   (p.rm && p.rm.toLowerCase().includes(q)) ||
+                   (p.birthplace && p.birthplace.toLowerCase().includes(q)) ||
+                   (p.gender && p.gender.toLowerCase().includes(q)) ||
+                   (p.medications && p.medications.toLowerCase().includes(q));
+          });
+        }
+        if(displayPatients.length === 0) {
+          patientListEl.innerHTML = `<tr><td colspan="7" style="text-align:center; font-style:italic;">Data pasien kosong atau tidak ditemukan</td></tr>`;
+          return;
+        }
+        patientListEl.innerHTML = displayPatients.map(p => `
+          <tr>
+            <td>${p.name}</td>
+            <td>${p.rm}</td>
+            <td>${p.birthplace}, ${new Date(p.birthdate).toLocaleDateString('id-ID')}</td>
+            <td>${p.gender}</td>
+            <td>${p.age}</td>
+            <td>${p.medications ? p.medications.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,'<br>') : ''}</td>
+            <td>
+              <button class="btn-edit" aria-label="Edit pasien ${p.name}" data-id="${p.id}">Edit</button>
+              <button class="btn-delete" aria-label="Hapus pasien ${p.name}" data-id="${p.id}">Hapus</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        if(!validateForm()) return;
+
+        const id = inputId.value;
+        if(id) {
+          const idx = patients.findIndex(p => p.id === id);
+          if(idx !== -1) {
+            patients[idx] = {
+              id,
+              name: inputName.value.trim(),
+              rm: inputRM.value.trim(),
+              birthplace: inputBirthplace.value.trim(),
+              birthdate: inputBirthdate.value,
+              gender: inputGender.value,
+              age: Number(inputAge.value),
+              medications: inputMedications.value.trim()
+            };
+            savePatients();
+            showMessage('Data pasien berhasil diperbarui.');
+          }
+        } else {
+          patients.push({
+            id: generateId(),
+            name: inputName.value.trim(),
+            rm: inputRM.value.trim(),
+            birthplace: inputBirthplace.value.trim(),
+            birthdate: inputBirthdate.value,
+            gender: inputGender.value,
+            age: Number(inputAge.value),
+            medications: inputMedications.value.trim()
+          });
+          savePatients();
+          showMessage('Pasien berhasil ditambahkan.');
+        }
+        clearForm();
+        renderPatients(searchInput.value);
+      });
+
+      patientListEl.addEventListener('click', e => {
+        const id = e.target.getAttribute('data-id');
+        if(!id) return;
+
+        const patient = patients.find(p => p.id === id);
+        if(!patient) return;
+
+        if(e.target.classList.contains('btn-edit')) {
+          inputId.value = patient.id;
+          inputName.value = patient.name;
+          inputRM.value = patient.rm;
+          inputBirthplace.value = patient.birthplace;
+          inputBirthdate.value = patient.birthdate;
+          inputGender.value = patient.gender;
+          inputAge.value = patient.age;
+          inputMedications.value = patient.medications || '';
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        else if(e.target.classList.contains('btn-delete')) {
+          if(confirm(`Hapus data pasien "${patient.name}"?`)) {
+            patients = patients.filter(p => p.id !== id);
+            savePatients();
+            showMessage('Data pasien berhasil dihapus.');
+            renderPatients(searchInput.value);
+          }
+        }
+      });
+
+      searchInput.addEventListener('input', () => {
+        renderPatients(searchInput.value);
+      });
+
+      // Initial load
+      loadPatients();
+      renderPatients();
+    })();
+  </script>
+</body>
+</html>
